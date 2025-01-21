@@ -19,10 +19,12 @@ public:
 	string GetHightScore();
 	void UpdateHightScore();
 	Block curblock;
+	Block nexblock;
+	Block GetRandBlock();
+	vector<Block> blocks;
 
 private:
 	bool checkArrowKey(int key);
-	Block GetRandBlock();
 	void updateScore(int lineclear, int movedown);
 	void MoveLeft();
 	void MoveRight();
@@ -31,6 +33,4 @@ private:
 	void RotateBlock();
 	void LockBlock();
 	bool BlockFit();
-	vector<Block> blocks;
-	Block nexblock;
 };
