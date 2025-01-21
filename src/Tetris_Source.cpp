@@ -32,6 +32,8 @@ Rectangle buttonBase = {150, 0, 200, 70};
 void EventTriggered(double, double &, Game &);
 void DrawMenu(const Rectangle[], const char *[], int);
 void DrawButton(Rectangle, const char *);
+void DrawButton2(Rectangle, const char *, bool);
+void DrawButton3(Rectangle, const char *);
 void ResizeWindow(gameState, bool, Texture2D);
 void SetSate(gameState);
 void DrawPause();
@@ -39,6 +41,7 @@ void DrawOver(Game &, gameState &, float, Font);
 void DrawScore(Game &, float, Font);
 void DrawInstruction();
 void HandInput(Game &, Game &);
+void BackButton(gameState &);
 int main()
 {
 
@@ -55,10 +58,8 @@ int main()
 
     dif Dif = medium;
 
-    tick = tickDefault = 1.0 * Dif / 10;
-    tick2 = tickDefault2 = 1.0 * Dif / 10;
-
-    Rectangle back = {165, 510, 170, 60};
+    tick = tickDefault = 0.5;
+    tick2 = tickDefault2 = 0.5;
 
     while (WindowShouldClose() == false) // escape
     {
@@ -130,12 +131,12 @@ int main()
                 DrawPause();
 
             if (IsKeyDown(KEY_S))
-                tick -= 0.005;
+                tick -= 0.01;
             else if (tick < 1)
                 tick = tickDefault;
 
             if (IsKeyDown(KEY_DOWN))
-                tick2 -= 0.005;
+                tick2 -= 0.01;
             else if (tick2 < 1)
                 tick2 = tickDefault2;
 
@@ -158,65 +159,89 @@ int main()
         case instruct:
         {
             DrawInstruction();
-            DrawRectangleRounded(back, 0.3, 6, lightblue);
-            DrawText("BACK", back.x + 45, back.y + 17, 30, WHITE);
-            bool click = IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
-            if (click && CheckCollisionPointRec(GetMousePosition(), back))
-                Gamestate = menu;
+            BackButton(Gamestate);
         }
         break;
         // difficult
         case difficult:
         {
             DrawText("Difficulty", 500 / 2 - MeasureText("Difficulty", 40) / 2, 20, 40, WHITE);
-            Rectangle button = {135, 100, 230, 60};
+            Rectangle but[] = {{135, 100, 230, 60},
+                               {135, 200, 230, 60},
+                               {135, 300, 230, 60}};
+            int j = 0;
+            vector<pair<const char *, dif>> txt = {{"Easy", easy}, {"Medium", medium}, {"Hard", hard}};
+            for (auto i : txt)
+                DrawButton2(but[j], i.first, (Dif == i.second)), j++;
 
-            vector<pair<const char *, dif>> but = {{"Easy", easy}, {"Medium", medium}, {"Hard", hard}};
-            for (auto i : but)
-            {
-                DrawRectangleRounded(button, 0.2, 6, (Dif == i.second) ? red2 : pink);
-                DrawText(i.first, button.x + 75, button.y + 17, 30, (Dif != i.second) ? red2 : pink);
-                button.y += 100;
-            }
+            BackButton(Gamestate);
 
-            DrawRectangleRounded(back, 0.3, 6, lightblue);
-            DrawText("BACK", back.x + 45, back.y + 17, 30, WHITE);
             bool click = IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
-            if (click && CheckCollisionPointRec(GetMousePosition(), back))
-                Gamestate = menu;
-
-            if (click && CheckCollisionPointRec(GetMousePosition(), {button.x, 100, button.width, button.height}))
+            if (click && CheckCollisionPointRec(GetMousePosition(), but[0]))
                 Dif = easy, Gamestate = menu;
-            else if (click && CheckCollisionPointRec(GetMousePosition(), {button.x, 200, button.width, button.height}))
+            else if (click && CheckCollisionPointRec(GetMousePosition(), but[1]))
                 Dif = medium, Gamestate = menu;
-            else if (click && CheckCollisionPointRec(GetMousePosition(), {button.x, 300, button.width, button.height}))
+            else if (click && CheckCollisionPointRec(GetMousePosition(), but[2]))
                 Dif = hard, Gamestate = menu;
-            tick = tickDefault = 1.0 * Dif / 10;
-            tick2 = tickDefault2 = 1.0 * Dif / 10;
         }
         break;
             // mode
         case mode:
         {
-            DrawText("Game Mode", 500 / 2 - MeasureText("Game Mode", 40) / 2, 20, 40, WHITE);
-            Rectangle mode1 = {135, 100, 230, 60};
-            DrawRectangleRounded(mode1, 0.2, 6, (gameplay2 == false) ? red2 : pink);
-            DrawText("1 Player", mode1.x + 60, mode1.y + 17, 30, (gameplay2 != false) ? red2 : pink);
+            DrawText("Game Mode", (defaultWindowSize.width - MeasureText("Game Mode", 40)) / 2, 20, 40, WHITE);
+            Rectangle mode[] = {{135, 100, 230, 60}, {135, 200, 230, 60}};
+            // Rectangle but[] = {{}}
+            DrawButton2(mode[0], "1 Player", gameplay2 == false);
+            DrawButton2(mode[1], "2 Player", gameplay2 == true);
 
-            Rectangle mode2 = {135, 200, 230, 60};
-            DrawRectangleRounded(mode2, 0.2, 6, (gameplay2 == true) ? red2 : pink);
-            DrawText("2 Player", mode2.x + 60, mode2.y + 17, 30, (gameplay2 != true) ? red2 : pink);
-            Rectangle back = {165, 500, 170, 60};
-            DrawRectangleRounded(back, 0.3, 6, lightblue);
-            DrawText("BACK", back.x + 45, back.y + 17, 30, WHITE);
+            Rectangle backgr = {5, 275, 480, 180};
+            Color lightblack = {0, 0, 0, 110};
+            DrawRectangleRounded(backgr, 0.1, 6, lightblack);
+
+            Vector2 pos[] = {{50, 330}, {50, 380}};
+            DrawText("Speed", (defaultWindowSize.width - MeasureText("Speed", 40)) / 2, 280, 40, WHITE);
+            DrawText("Player 1: ", pos[0].x, pos[0].y, 20, WHITE);
+            DrawText("Player 2: ", pos[1].x, pos[1].y, 20, WHITE);
+
+            Rectangle but[] = {
+                {pos[0].x + 100, pos[0].y, 30, 30}, // 1 -
+                {pos[0].x + 300, pos[0].y, 30, 30}, // 1 +
+                {pos[1].x + 100, pos[1].y, 30, 30}, // 2 -
+                {pos[1].x + 300, pos[1].y, 30, 30}  // 2 +
+            };
+            DrawButton3(but[0], "+");
+            stringstream s1, s2;
+            s1 << (1 - tickDefault) * 10;
+            const char *spd1 = s1.str().c_str();
+            s2 << (1 - tickDefault2) * 10;
+            const char *spd2 = s2.str().c_str();
+
+            DrawButton3(but[0], "-");
+            DrawText(spd1, pos[0].x + 200 - MeasureText(spd1, 20) / 2, pos[0].y, 20, WHITE);
+            DrawButton3(but[1], "+");
+
+            DrawButton3(but[2], "-");
+            DrawText(spd2, pos[1].x + 200 - MeasureText(spd2, 20) / 2, pos[1].y, 20, WHITE);
+            DrawButton3(but[3], "+");
 
             bool click = IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
-            if (click && CheckCollisionPointRec(GetMousePosition(), back))
-                Gamestate = menu;
-            if (click && CheckCollisionPointRec(GetMousePosition(), mode1))
-                gameplay2 = false, Gamestate = menu;
-            else if (click && CheckCollisionPointRec(GetMousePosition(), mode2))
-                gameplay2 = true, Gamestate = menu;
+            if (click)
+            {
+                if (CheckCollisionPointRec(GetMousePosition(), mode[0]))
+                    gameplay2 = false;
+                else if (CheckCollisionPointRec(GetMousePosition(), mode[1]))
+                    gameplay2 = true;
+                if (CheckCollisionPointRec(GetMousePosition(), but[0]) && (tickDefault * 10 < 9))
+                    tickDefault += 0.1;
+                if (CheckCollisionPointRec(GetMousePosition(), but[1]) && (tickDefault * 10 > 2))
+                    tickDefault -= 0.1;
+                if (CheckCollisionPointRec(GetMousePosition(), but[2]) && (tickDefault2 * 10 < 9))
+                    tickDefault2 += 0.1;
+                if (CheckCollisionPointRec(GetMousePosition(), but[3]) && (tickDefault2 * 10 > 2))
+                    tickDefault2 -= 0.1;
+            }
+
+            BackButton(Gamestate);
         }
         break;
         }
@@ -253,7 +278,20 @@ void DrawMenu(const Rectangle but[], const char *txt[], int count)
 void DrawButton(Rectangle Button, const char *txt)
 {
     DrawRectangleRounded(Button, 0.5, 30, violet);
-    DrawText(txt, Button.x + (Button.width - MeasureText(txt, 30))/2, Button.y + 25, 30, lightviolet);
+    DrawText(txt, Button.x + (Button.width - MeasureText(txt, 30)) / 2, Button.y + 25, 30, lightviolet);
+}
+void DrawButton2(Rectangle Button, const char *txt, bool b)
+{
+    DrawRectangleRounded(Button, 0.5, 6, b ? red2 : pink);
+    DrawText(txt, Button.x + (Button.width - MeasureText(txt, 30)) / 2, Button.y + 17, 30, !b ? red2 : pink);
+}
+void DrawButton3(Rectangle Button, const char *txt)
+{
+    DrawRectangleRounded(Button, 0.5, 30, violet);
+    string t = "-";
+    if (txt == t.c_str())
+        Button.x += 2, Button.y += 2;
+    DrawText(txt, Button.x + MeasureText(txt, 30) / 2, Button.y, 30, lightviolet);
 }
 void ResizeWindow(gameState Gamestate, bool gameplay2, Texture2D bgtext)
 {
@@ -318,9 +356,7 @@ void HandInput(Game &game, Game &game2)
 }
 void DrawInstruction()
 {
-    Rectangle backgr = {5, 80, 490, 400};
-    Color lightblack = {0, 0, 0, 110};
-    DrawRectangleRounded(backgr, 0.1, 6, lightblack);
+
     DrawText("Instructions", (defaultWindowSize.width - MeasureText("Instructions", 40)) / 2, 20, 40, WHITE);
     vector<const char *> instructions = {
         {"Press Enter to return to the Main Menu"},
@@ -338,4 +374,13 @@ void DrawInstruction()
     int base = 100; // first line
     for (auto line : instructions)
         DrawText(line, 15, base, 18, WHITE), base += 30;
+}
+void BackButton(gameState &Gamestate)
+{
+    Rectangle back = {165, 510, 170, 60};
+    DrawRectangleRounded(back, 0.3, 6, lightblue);
+    DrawText("BACK", back.x + 45, back.y + 17, 30, WHITE);
+    bool click = IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
+    if (click && CheckCollisionPointRec(GetMousePosition(), back))
+        Gamestate = menu;
 }
