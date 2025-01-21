@@ -49,11 +49,16 @@ int main()
     Font font = LoadFontEx("font/monogram.ttf", 64, 0, 0);
 
     gameState Gamestate = menu;
+
     Game game = Game(),
          game2 = Game();
+
     dif Dif = medium;
+
     tick = tickDefault = 1.0 * Dif / 10;
     tick2 = tickDefault2 = 1.0 * Dif / 10;
+
+    Rectangle back = {165, 510, 170, 60};
 
     while (WindowShouldClose() == false) // escape
     {
@@ -152,20 +157,7 @@ int main()
             // instruct
         case instruct:
         {
-            DrawRectangleRounded({5, 80, 490, 400}, 0.1, 6, {0, 0, 0, 110});
-            DrawText("Instructions", 500 / 2 - MeasureText("Instructions", 40) / 2, 20, 40, WHITE);
-            DrawText("Press Enter to return to the Main Menu ", 15, 100, 18, WHITE);
-            DrawText("Press arrow up or W key to rotate the blocks ", 15, 130, 18, WHITE);
-            DrawText("Press arrow left or A key to move the blocks ", 15, 160, 18, WHITE);
-            DrawText("Press arrow right or D key to move the blocks ", 15, 190, 18, WHITE);
-            DrawText("Press arrow down or S key to move the blocks ", 15, 220, 18, WHITE);
-            DrawText("Hold arrow down key to accelerate the game ", 15, 250, 18, WHITE);
-            DrawText("When game over press on any arrow key to continue", 15, 280, 18, WHITE);
-            DrawText("Press space bar to stop the game  ", 15, 310, 18, WHITE);
-            DrawText("Press space bar again to continue the game  ", 15, 340, 18, WHITE);
-            DrawText("Click Difficulty button to adjust game difficulty ", 15, 370, 18, WHITE);
-            DrawText("Press ESC to escape the programme ", 15, 400, 18, WHITE);
-            Rectangle back = {165, 500, 170, 60};
+            DrawInstruction();
             DrawRectangleRounded(back, 0.3, 6, lightblue);
             DrawText("BACK", back.x + 45, back.y + 17, 30, WHITE);
             bool click = IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
@@ -177,30 +169,27 @@ int main()
         case difficult:
         {
             DrawText("Difficulty", 500 / 2 - MeasureText("Difficulty", 40) / 2, 20, 40, WHITE);
-            Rectangle easyb = {135, 100, 230, 60};
-            DrawRectangleRounded(easyb, 0.2, 6, (Dif == easy) ? red2 : pink);
-            DrawText("Easy", easyb.x + 80, easyb.y + 17, 30, (Dif != easy) ? red2 : pink);
+            Rectangle button = {135, 100, 230, 60};
 
-            Rectangle mediumb = {135, 200, 230, 60};
-            DrawRectangleRounded(mediumb, 0.2, 6, (Dif == medium) ? red2 : pink);
-            DrawText("Medium", mediumb.x + 75, mediumb.y + 17, 30, (Dif != medium) ? red2 : pink);
+            vector<pair<const char *, dif>> but = {{"Easy", easy}, {"Medium", medium}, {"Hard", hard}};
+            for (auto i : but)
+            {
+                DrawRectangleRounded(button, 0.2, 6, (Dif == i.second) ? red2 : pink);
+                DrawText(i.first, button.x + 75, button.y + 17, 30, (Dif != i.second) ? red2 : pink);
+                button.y += 100;
+            }
 
-            Rectangle hardb = {135, 300, 230, 60};
-            DrawRectangleRounded(hardb, 0.2, 6, (Dif == hard) ? red2 : pink);
-            DrawText("Hard", hardb.x + 80, hardb.y + 17, 30, (Dif != hard) ? red2 : pink);
-
-            Rectangle back = {165, 500, 170, 60};
             DrawRectangleRounded(back, 0.3, 6, lightblue);
             DrawText("BACK", back.x + 45, back.y + 17, 30, WHITE);
             bool click = IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
             if (click && CheckCollisionPointRec(GetMousePosition(), back))
                 Gamestate = menu;
 
-            if (click && CheckCollisionPointRec(GetMousePosition(), easyb))
+            if (click && CheckCollisionPointRec(GetMousePosition(), {button.x, 100, button.width, button.height}))
                 Dif = easy, Gamestate = menu;
-            else if (click && CheckCollisionPointRec(GetMousePosition(), mediumb))
+            else if (click && CheckCollisionPointRec(GetMousePosition(), {button.x, 200, button.width, button.height}))
                 Dif = medium, Gamestate = menu;
-            else if (click && CheckCollisionPointRec(GetMousePosition(), hardb))
+            else if (click && CheckCollisionPointRec(GetMousePosition(), {button.x, 300, button.width, button.height}))
                 Dif = hard, Gamestate = menu;
             tick = tickDefault = 1.0 * Dif / 10;
             tick2 = tickDefault2 = 1.0 * Dif / 10;
@@ -264,7 +253,7 @@ void DrawMenu(const Rectangle but[], const char *txt[], int count)
 void DrawButton(Rectangle Button, const char *txt)
 {
     DrawRectangleRounded(Button, 0.5, 30, violet);
-    DrawText(txt, Button.x + (Button.width - MeasureText(txt, 30)), Button.y + 25, 30, lightviolet);
+    DrawText(txt, Button.x + (Button.width - MeasureText(txt, 30))/2, Button.y + 25, 30, lightviolet);
 }
 void ResizeWindow(gameState Gamestate, bool gameplay2, Texture2D bgtext)
 {
@@ -326,4 +315,27 @@ void HandInput(Game &game, Game &game2)
         game.Inp2(key);
     if (Pause && game.gameover == false)
         DrawPause();
+}
+void DrawInstruction()
+{
+    Rectangle backgr = {5, 80, 490, 400};
+    Color lightblack = {0, 0, 0, 110};
+    DrawRectangleRounded(backgr, 0.1, 6, lightblack);
+    DrawText("Instructions", (defaultWindowSize.width - MeasureText("Instructions", 40)) / 2, 20, 40, WHITE);
+    vector<const char *> instructions = {
+        {"Press Enter to return to the Main Menu"},
+        {"Press arrow up or W key to rotate the blocks "},
+        {"Press arrow left or A key to move the blocks "},
+        {"Press arrow right or D key to move the blocks "},
+        // {"Press arrow down or S key to move the blocks "},
+        {"Hold arrow down or S key to accelerate the game "},
+        {"When game over press on any arrow key to continue"},
+        {"Press space bar to stop the game only 1 Player"},
+        {"Press space bar again to continue the game"},
+        {"Press ESC to escape the programme "}
+
+    };
+    int base = 100; // first line
+    for (auto line : instructions)
+        DrawText(line, 15, base, 18, WHITE), base += 30;
 }
