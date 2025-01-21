@@ -1,5 +1,4 @@
 #include <raylib.h>
-#include <bits/stdc++.h>
 #include <iostream>
 #include "game.h"
 using namespace std;
