@@ -22,6 +22,7 @@ public:
 	Block nexblock;
 	Block GetRandBlock();
 	vector<Block> blocks;
+	bool BlockFit();
 
 private:
 	bool checkArrowKey(int key);
@@ -32,5 +33,4 @@ private:
 	bool isBlockOut();
 	void RotateBlock();
 	void LockBlock();
-	bool BlockFit();
 };
