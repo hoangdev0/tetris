@@ -135,7 +135,7 @@ void Game::Reset()
 string Game::GetHightScore()
 {
 	string highscore;
-	ifstream f("D:/Hoang/Tetris_final2/Tetris/src/tetris.hightscore");
+	ifstream f("src/tetris.hightscore");
 	getline(f, highscore);
 	f.close();
 	return highscore;
@@ -148,7 +148,7 @@ void Game::UpdateHightScore()
 	{
 		highscore = score;
 		ofstream f;
-		f.open("D:/Hoang/Tetris_final2/Tetris/src/tetris.hightscore");
+		f.open("src/tetris.hightscore");
 		f << highscore;
 		f.close();
 	}

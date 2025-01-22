@@ -3,7 +3,6 @@
 #include "grid.h"
 #include "tetrominos.cpp"
 using namespace std;
-
 class Game
 {
 public:

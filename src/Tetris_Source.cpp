@@ -49,7 +49,7 @@ int main()
     InitWindow(defaultWindowSize.width, defaultWindowSize.height, "Tetris");
     SetTargetFPS(60);
 
-    Texture2D bgtext = LoadTexture("D:/hoang/tetris/src/bg4.png");
+    Texture2D bgtext = LoadTexture("src/bg4.png");
     Font font = LoadFontEx("font/monogram.ttf", 64, 0, 0);
 
     gameState Gamestate = menu;
@@ -344,7 +344,6 @@ void DrawGameMode()
     Vector2 pos[] = {{50, 330}, {50, 380}};
     DrawText("Speed", (defaultWindowSize.width - MeasureText("Speed", 40)) / 2, 280, 40, WHITE);
     DrawText("Player 1: ", pos[0].x, pos[0].y, 20, WHITE);
-    DrawText("Player 2: ", pos[1].x, pos[1].y, 20, WHITE);
 
     Rectangle but[] = {
         {pos[0].x + 100, pos[0].y, 30, 30}, // 1 -
@@ -362,10 +361,13 @@ void DrawGameMode()
     DrawButton3(but[0], "-");
     DrawText(spd1, pos[0].x + 200 - MeasureText(spd1, 20) / 2, pos[0].y, 20, WHITE);
     DrawButton3(but[1], "+");
-
-    DrawButton3(but[2], "-");
-    DrawText(spd2, pos[1].x + 200 - MeasureText(spd2, 20) / 2, pos[1].y, 20, WHITE);
-    DrawButton3(but[3], "+");
+    if (gameplay2)
+    {
+        DrawText("Player 2: ", pos[1].x, pos[1].y, 20, WHITE);
+        DrawButton3(but[2], "-");
+        DrawText(spd2, pos[1].x + 200 - MeasureText(spd2, 20) / 2, pos[1].y, 20, WHITE);
+        DrawButton3(but[3], "+");
+    }
 
     bool click = IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
     if (click)
