@@ -117,13 +117,12 @@ int main()
             if (game.gameover)
                 DrawOver(game, Gamestate, displayGame1, font);
 
-            if (!Pause)
+            else if (!Pause)
             {
                 // Hand Input
                 HandInput(game, game2);
                 // move down block
                 EventTriggered(tick, lastUpdateTime, game);
-                EventTriggered(tick2, lastUpdateTime2, game2);
             }
             else
                 DrawPause();
@@ -149,6 +148,8 @@ int main()
                 // gameplay 2 over
                 if (game2.gameover)
                     DrawOver(game2, Gamestate, displayGame2, font);
+                else
+                    EventTriggered(tick2, lastUpdateTime2, game2);
                 game2.Draw(displayGame2);
             }
         }
@@ -302,7 +303,7 @@ void HandInput(Game &game, Game &game2)
 }
 void DrawInstruction()
 {
-
+    DrawRectangleRounded({5, 80, 490, 400}, 0.1, 6, {0, 0, 0, 110});
     DrawText("Instructions", (defaultWindowSize.width - MeasureText("Instructions", 40)) / 2, 20, 40, WHITE);
     vector<const char *> instructions = {
         {"Press Enter to return to the Main Menu"},
