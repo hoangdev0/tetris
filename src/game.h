@@ -3,7 +3,6 @@
 #include "grid.h"
 #include "tetrominos.cpp"
 using namespace std;
-
 class Game
 {
 public:
@@ -19,10 +18,13 @@ public:
 	string GetHightScore();
 	void UpdateHightScore();
 	Block curblock;
+	Block nexblock;
+	Block GetRandBlock();
+	vector<Block> blocks;
+	bool BlockFit();
 
 private:
 	bool checkArrowKey(int key);
-	Block GetRandBlock();
 	void updateScore(int lineclear, int movedown);
 	void MoveLeft();
 	void MoveRight();
@@ -30,7 +32,4 @@ private:
 	bool isBlockOut();
 	void RotateBlock();
 	void LockBlock();
-	bool BlockFit();
-	vector<Block> blocks;
-	Block nexblock;
 };

@@ -21,7 +21,6 @@ Block Game::GetRandBlock()
 }
 vector<Block> Game::GetAllBlock()
 {
-
 	return {JBlock(), IBlock(), LBlock(), OBlock(), SBlock(), ZBlock(), TBlock()};
 }
 
@@ -133,15 +132,10 @@ void Game::Reset()
 	score = 0;
 }
 
-void Game::SetBlock(Block block)
-{
-	curblock = block;
-}
-
 string Game::GetHightScore()
 {
 	string highscore;
-	ifstream f("D:/Hoang/Tetris_final2/Tetris/src/tetris.hightscore");
+	ifstream f("src/tetris.hightscore");
 	getline(f, highscore);
 	f.close();
 	return highscore;
@@ -154,7 +148,7 @@ void Game::UpdateHightScore()
 	{
 		highscore = score;
 		ofstream f;
-		f.open("D:/Hoang/Tetris_final2/Tetris/src/tetris.hightscore");
+		f.open("src/tetris.hightscore");
 		f << highscore;
 		f.close();
 	}
@@ -162,7 +156,7 @@ void Game::UpdateHightScore()
 
 void Game::updateScore(int lineclear, int movedown)
 {
-	int score_m[] = {100,300,500,700};
+	int score_m[] = {100, 300, 500, 700};
 
 	if (lineclear > 0 && lineclear <= 4)
 		score += score_m[lineclear - 1];
