@@ -3,11 +3,11 @@
 #include "grid.h"
 #include "tetrominos.cpp"
 using namespace std;
+vector<Block> GetAllBlock();
 class Game
 {
 public:
 	Game();
-	vector<Block> GetAllBlock();
 	bool gameover;
 	int score;
 	void Draw(int start);
@@ -22,6 +22,10 @@ public:
 	Block GetRandBlock();
 	vector<Block> blocks;
 	bool BlockFit();
+	static vector<Block> blockPool; // Danh sách block chung
+	int id;							// Vị trí hiện tại trong blockPool
+	static int seed;				// Seed ban đầu
+	static void InitBlockPool();	// Khởi tạo blockPool với seed hiện tại
 
 private:
 	bool checkArrowKey(int key);

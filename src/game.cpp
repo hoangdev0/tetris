@@ -1,25 +1,32 @@
 #include "game.h"
-
+vector<Block> Game::blockPool = {};
+int Game::seed = rand() % 1000;
 Game::Game()
 {
+	srand(time(0));
+	seed = rand() % 1000;
 	grid = Grid();
 	blocks = GetAllBlock();
 	curblock = GetRandBlock();
 	nexblock = GetRandBlock();
 	gameover = false;
+	id = 0;
 	score = 0;
 }
 
 Block Game::GetRandBlock()
 {
-	if (blocks.empty())
-		blocks = GetAllBlock();
-	int index = rand() % blocks.size();
-	Block block = blocks[index];
-	blocks.erase(blocks.begin() + index);
+	if (blockPool.empty() || id >= blockPool.size())
+	{
+		InitBlockPool();
+		// id = 0; // Reset index
+	}
+	// Lấy block tại vị trí id và tăng index
+	Block block = blockPool[id];
+	id++;
 	return block;
 }
-vector<Block> Game::GetAllBlock()
+vector<Block> GetAllBlock()
 {
 	return {JBlock(), IBlock(), LBlock(), OBlock(), SBlock(), ZBlock(), TBlock()};
 }
@@ -81,6 +88,17 @@ void Game::RotateBlock()
 			curblock.UnRotate();
 	}
 }
+void Game::InitBlockPool()
+{
+	srand(seed); // Sử dụng seed hiện tại
+	// blockPool.clear();
+	vector<Block> temp = GetAllBlock();
+	random_shuffle(temp.begin(), temp.end());
+	blockPool.insert(blockPool.end(), temp.begin(), temp.end());
+
+	// Cập nhật seed mới để lần sau random khác
+	seed = rand(); // Seed mới dựa trên seed cũ
+}
 bool Game::checkArrowKey(int key)
 {
 	return (key == KEY_RIGHT || key == KEY_LEFT || key == KEY_DOWN || key == KEY_UP);
@@ -129,6 +147,8 @@ void Game::Reset()
 	curblock = GetRandBlock();
 	nexblock = GetRandBlock();
 	gameover = false;
+	id = 0;
+	blockPool.clear();
 	score = 0;
 }
 

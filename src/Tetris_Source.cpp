@@ -44,8 +44,7 @@ void HandInput(Game &, Game &);
 void BackButton(gameState &);
 void DrawGameMode();
 int main()
-{
-
+{   
     InitWindow(defaultWindowSize.width, defaultWindowSize.height, "Tetris");
     SetTargetFPS(60);
 
@@ -56,6 +55,9 @@ int main()
 
     Game game = Game(),
          game2 = Game();
+
+    game.curblock = game2.curblock;
+    game.nexblock = game2.nexblock;
 
     dif Dif = medium;
 
@@ -198,11 +200,14 @@ int main()
     CloseWindow();
 }
 /*
-    game 1 người chơi tăng độ khó thêm level
-    game 2 người chơi cùng block
-    lưu người chơi:
+    task:
+        game 1 người chơi tăng độ khó thêm level
+        lưu người chơi:
+        ** chơi online trên 2 máy
 
-    ** chơi online trên 2 máy
+    done:
+        game 2 người chơi cùng block 
+
  */
 
 void EventTriggered(double interval, double &lastUpdateTime, Game &game)
