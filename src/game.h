@@ -23,8 +23,7 @@ public:
 	vector<Block> blocks;
 	bool BlockFit();
 	static vector<Block> blockPool; // Danh sách block chung
-	int id;							// Vị trí hiện tại trong blockPool
-	static int seed;				// Seed ban đầu
+	int id;							// Vị trí hiện tại trong blockPool			// Seed ban đầu
 	static void InitBlockPool();	// Khởi tạo blockPool với seed hiện tại
 
 private:

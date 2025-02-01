@@ -12,9 +12,8 @@ void Block::Draw(int x, int y)
 {
 	vector<position> title = getCells();
 	for (auto i : title)
-	{
 		DrawRectangle(i.col * cellSize + x, i.row * cellSize + y, cellSize - 1, cellSize - 1, color[id]);
-	}
+	
 }
 
 void Block::Move(int rows, int cols)

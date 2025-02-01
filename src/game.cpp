@@ -1,22 +1,19 @@
 #include "game.h"
 vector<Block> Game::blockPool = {};
-int Game::seed = rand() % 1000;
 Game::Game()
 {
-	srand(time(0));
-	seed = rand() % 1000;
 	grid = Grid();
+	id = 0;
 	blocks = GetAllBlock();
 	curblock = GetRandBlock();
 	nexblock = GetRandBlock();
 	gameover = false;
-	id = 0;
 	score = 0;
 }
 
 Block Game::GetRandBlock()
 {
-	if (blockPool.empty() || id >= blockPool.size())
+	if (blockPool.empty() || id >= (int)blockPool.size())
 	{
 		InitBlockPool();
 		// id = 0; // Reset index
@@ -90,14 +87,11 @@ void Game::RotateBlock()
 }
 void Game::InitBlockPool()
 {
-	srand(seed); // Sử dụng seed hiện tại
-	// blockPool.clear();
+	srand(time(0));
+	int seed = rand() % 1000;
 	vector<Block> temp = GetAllBlock();
-	random_shuffle(temp.begin(), temp.end());
+	shuffle(temp.begin(), temp.end(), default_random_engine(seed));
 	blockPool.insert(blockPool.end(), temp.begin(), temp.end());
-
-	// Cập nhật seed mới để lần sau random khác
-	seed = rand(); // Seed mới dựa trên seed cũ
 }
 bool Game::checkArrowKey(int key)
 {
@@ -142,13 +136,14 @@ void Game::Inp2(int key)
 
 void Game::Reset()
 {
+	blockPool.clear();
+	InitBlockPool();
+	id = 0;
 	grid.khoitao();
 	blocks = GetAllBlock();
 	curblock = GetRandBlock();
 	nexblock = GetRandBlock();
 	gameover = false;
-	id = 0;
-	blockPool.clear();
 	score = 0;
 }
 
@@ -200,6 +195,7 @@ void Game::LockBlock()
 	if (BlockFit() == false)
 	{
 		gameover = true;
+		curblock.Move(-1, 0);
 	}
 	nexblock = GetRandBlock();
 	updateScore(grid.ClearFullRow(), 0);
