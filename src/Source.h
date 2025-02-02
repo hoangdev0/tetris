@@ -29,9 +29,6 @@ double tick = 0.5, tickDefault = 0.5;
 double tick2 = 0.5, tickDefault2 = 0.5;
 int displayGame1 = 0, displayGame2 = 505;
 Rectangle buttonBase = {150, 0, 200, 70};
-const char *patch[] = {"src/bg4.png",
-                       "font/monogram.ttf",
-                       "src/tetris.hightscore"};
 
 void EventTriggered(double, double &, Game &);
 void DrawMenu(const Rectangle[], const char *[], int);
