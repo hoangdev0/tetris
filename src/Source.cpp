@@ -1,14 +1,4 @@
 #include "Source.h"
-/*
-    task:
-        game 1 người chơi tăng độ khó thêm level
-        lưu người chơi:
-        ** chơi online trên 2 máy
-
-    done:
-        game 2 người chơi cùng block
-
- */
 
 void EventTriggered(double interval, double &lastUpdateTime, Game &game)
 {
@@ -133,8 +123,10 @@ void BackButton(gameState &Gamestate)
     DrawRectangleRounded(back, 0.3, 6, lightblue);
     DrawText("BACK", back.x + 45, back.y + 17, 30, WHITE);
     bool click = IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
-    if (click && CheckCollisionPointRec(GetMousePosition(), back))
+    if (click && CheckCollisionPointRec(GetMousePosition(), back)){
         Gamestate = menu;
+        SaveGameMode();
+    }
 }
 void DrawGameMode()
 {
@@ -182,6 +174,7 @@ void DrawGameMode()
             gameplay2 = false;
         else if (CheckCollisionPointRec(GetMousePosition(), mode[1]))
             gameplay2 = true;
+        
         if (CheckCollisionPointRec(GetMousePosition(), but[0]) && (tickDefault * 10 < 9))
             tickDefault += 0.1;
         if (CheckCollisionPointRec(GetMousePosition(), but[1]) && (tickDefault * 10 > 2))
@@ -191,4 +184,60 @@ void DrawGameMode()
         if (CheckCollisionPointRec(GetMousePosition(), but[3]) && (tickDefault2 * 10 > 2))
             tickDefault2 -= 0.1;
     }
+}
+void LoadGameMode()
+{
+    ifstream f("save/save.mode", ios_base::binary);
+    if (!f) {
+        cerr << "loi mo tep!" << endl;
+        return;
+    }
+    cerr << "Load Mode and Speed ok." << endl;
+    f.read(reinterpret_cast<char *>(&gameplay2), sizeof(gameplay2));
+    f.read(reinterpret_cast<char *>(&tickDefault), sizeof(tickDefault));
+    f.read(reinterpret_cast<char *>(&tickDefault2), sizeof(tickDefault2));
+    f.close();
+}
+void SaveGameMode()
+{
+    ofstream f("save/save.mode", ios_base::binary);
+    if (!f) {
+        cerr << "loi mo tep!" << endl;
+        return;
+    }
+    cerr << "Saved mode and speed." << endl;
+    f.write(reinterpret_cast<char *>(&gameplay2), sizeof(gameplay2)); // save mode
+    f.write(reinterpret_cast<char *>(&tickDefault), sizeof(tickDefault)); // same sleep game 1
+    f.write(reinterpret_cast<char *>(&tickDefault2), sizeof(tickDefault2)); // save game 2
+    f.close();
+}
+
+void SaveGrid(Game &game, Game &game2)
+{
+    ofstream f("save/save.gird", ios_base::binary);
+    if (!f) {
+        cerr << "loi mo tep!" << endl;
+        return;
+    }
+    cerr << "Saved grid." << endl;
+    f.write(reinterpret_cast<char *>(&game.grid), sizeof(game.grid));
+    f.write(reinterpret_cast<char *>(&game2.grid), sizeof(game2.grid));
+    game.grid.print(); cout <<"\n";
+    game2.grid.print();
+    f.close();
+}
+
+void LoadGrid(Game &game, Game &game2)
+{
+    ifstream f("save/save.gird", ios_base::binary);
+    if (!f) {
+        cerr << "loi mo tep!" << endl;
+        return;
+    }
+    cerr << "Load Grid ok." << endl;
+    f.read(reinterpret_cast<char *>(&game.grid), sizeof(game.grid));
+    f.read(reinterpret_cast<char *>(&game2.grid), sizeof(game2.grid));
+    game.grid.print(); cout <<"\n";
+    game2.grid.print();
+    f.close();
 }

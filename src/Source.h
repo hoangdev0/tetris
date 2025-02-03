@@ -44,6 +44,10 @@ void DrawInstruction();
 void HandInput(Game &, Game &);
 void BackButton(gameState &);
 void DrawGameMode();
+void SaveGameMode();
+void LoadGameMode();
+void SaveGrid(Game &, Game &);
+void LoadGrid(Game &, Game &);
 int main()
 {
     InitWindow(defaultWindowSize.width, defaultWindowSize.height, "Tetris");
@@ -59,9 +63,10 @@ int main()
 
     dif Dif = medium;
 
+    LoadGameMode();
+    
     while (WindowShouldClose() == false) // escape
     {
-
         BeginDrawing();
         ClearBackground(darkblue);
 
@@ -70,6 +75,7 @@ int main()
         // Return Menu & ResetGame
         if (IsKeyPressed(KEY_ENTER))
         {
+            SaveGrid(game, game2);
             Gamestate = menu;
             game.Reset();
             game2.Reset();
@@ -95,7 +101,8 @@ int main()
                 game.Reset();
                 game2.Reset();
                 Gamestate = gameplay;
-            } // vector<Block>Temp = 100
+                LoadGrid(game, game2);
+            }
             if (click && CheckCollisionPointRec(GetMousePosition(), but[1]))
                 Gamestate = instruct;
             if (click && CheckCollisionPointRec(GetMousePosition(), but[2]))
@@ -107,6 +114,7 @@ int main()
         // gameplay
         case gameplay:
         {
+
             if (gameplay2 == false && IsKeyPressed(KEY_SPACE))
                 Pause = !Pause;
 
@@ -140,6 +148,7 @@ int main()
             game.Draw(displayGame1);
 
             /*=== Game play 2 ===*/
+            
             if (gameplay2)
             {
                 // draw score gameplay 2
@@ -194,6 +203,5 @@ int main()
         }
         EndDrawing();
     }
-
     CloseWindow();
 }

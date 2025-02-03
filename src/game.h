@@ -26,13 +26,17 @@ public:
 	int id;							// Vị trí hiện tại trong blockPool			// Seed ban đầu
 	static void InitBlockPool();	// Khởi tạo blockPool với seed hiện tại
 
+	Grid grid;
+
+
 private:
 	bool checkArrowKey(int key);
 	void updateScore(int lineclear, int movedown);
 	void MoveLeft();
 	void MoveRight();
-	Grid grid;
+	
 	bool isBlockOut();
 	void RotateBlock();
 	void LockBlock();
+	
 };
