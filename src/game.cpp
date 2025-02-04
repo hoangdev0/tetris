@@ -1,8 +1,9 @@
 #include "game.h"
-
+vector<Block> Game::blockPool = {};
 Game::Game()
 {
 	grid = Grid();
+	id = 0;
 	blocks = GetAllBlock();
 	curblock = GetRandBlock();
 	nexblock = GetRandBlock();
@@ -12,16 +13,18 @@ Game::Game()
 
 Block Game::GetRandBlock()
 {
-	if (blocks.empty())
-		blocks = GetAllBlock();
-	int index = rand() % blocks.size();
-	Block block = blocks[index];
-	blocks.erase(blocks.begin() + index);
+	if (blockPool.empty() || id >= (int)blockPool.size())
+	{
+		InitBlockPool();
+		// id = 0; // Reset index
+	}
+	// Lấy block tại vị trí id và tăng index
+	Block block = blockPool[id];
+	id++;
 	return block;
 }
-vector<Block> Game::GetAllBlock()
+vector<Block> GetAllBlock()
 {
-
 	return {JBlock(), IBlock(), LBlock(), OBlock(), SBlock(), ZBlock(), TBlock()};
 }
 
@@ -82,6 +85,14 @@ void Game::RotateBlock()
 			curblock.UnRotate();
 	}
 }
+void Game::InitBlockPool()
+{
+	srand(time(0));
+	int seed = rand() % 1000;
+	vector<Block> temp = GetAllBlock();
+	shuffle(temp.begin(), temp.end(), default_random_engine(seed));
+	blockPool.insert(blockPool.end(), temp.begin(), temp.end());
+}
 bool Game::checkArrowKey(int key)
 {
 	return (key == KEY_RIGHT || key == KEY_LEFT || key == KEY_DOWN || key == KEY_UP);
@@ -125,6 +136,9 @@ void Game::Inp2(int key)
 
 void Game::Reset()
 {
+	blockPool.clear();
+	InitBlockPool();
+	id = 0;
 	grid.khoitao();
 	blocks = GetAllBlock();
 	curblock = GetRandBlock();
@@ -133,15 +147,10 @@ void Game::Reset()
 	score = 0;
 }
 
-void Game::SetBlock(Block block)
-{
-	curblock = block;
-}
-
 string Game::GetHightScore()
 {
 	string highscore;
-	ifstream f("D:/Hoang/Tetris_final2/Tetris/src/tetris.hightscore");
+	ifstream f("src/tetris.hightscore");
 	getline(f, highscore);
 	f.close();
 	return highscore;
@@ -154,7 +163,7 @@ void Game::UpdateHightScore()
 	{
 		highscore = score;
 		ofstream f;
-		f.open("D:/Hoang/Tetris_final2/Tetris/src/tetris.hightscore");
+		f.open("src/tetris.hightscore");
 		f << highscore;
 		f.close();
 	}
@@ -162,7 +171,7 @@ void Game::UpdateHightScore()
 
 void Game::updateScore(int lineclear, int movedown)
 {
-	int score_m[] = {100,300,500,700};
+	int score_m[] = {100, 300, 500, 700};
 
 	if (lineclear > 0 && lineclear <= 4)
 		score += score_m[lineclear - 1];
@@ -186,6 +195,7 @@ void Game::LockBlock()
 	if (BlockFit() == false)
 	{
 		gameover = true;
+		curblock.Move(-1, 0);
 	}
 	nexblock = GetRandBlock();
 	updateScore(grid.ClearFullRow(), 0);
