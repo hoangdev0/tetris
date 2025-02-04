@@ -27,7 +27,6 @@ vector<Block> GetAllBlock()
 {
 	return {JBlock(), IBlock(), LBlock(), OBlock(), SBlock(), ZBlock(), TBlock()};
 }
-
 void Game::Draw(int start)
 {
 	grid.draw(start);
