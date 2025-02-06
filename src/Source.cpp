@@ -9,12 +9,12 @@ int main()
     Font font = LoadFontEx("font/monogram.ttf", 64, 0, 0);
 
     gameState Gamestate = menu;
-
-    Game game = Game(),
-         game2 = Game();
+    int seed = time(0);
+    Game game = Game(seed),
+         game2 = Game(seed);
 
     dif Dif = medium;
-    
+
     while (WindowShouldClose() == false) // escape
     {
         BeginDrawing();
@@ -36,6 +36,7 @@ int main()
         case menu:
         {
             //                            x      y               width             height
+            DrawRectangleRounded(defaultWindowSize, 0.1, 6, {0, 0, 0, 50});
             Rectangle but[] = {
                 {buttonBase.x, 200, buttonBase.width, buttonBase.height}, // Strat
                 {buttonBase.x, 300, buttonBase.width, buttonBase.height}, // Instruct
@@ -47,9 +48,9 @@ int main()
             bool click = IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
             if (click && CheckCollisionPointRec(GetMousePosition(), but[0]))
             {
-                game.Reset();
-                game2.Reset();
-                Gamestate = gameplay;
+                Gamestate = ctn;
+                // game.Reset();
+                // game2.Reset();
             }
             if (click && CheckCollisionPointRec(GetMousePosition(), but[1]))
                 Gamestate = instruct;
@@ -57,6 +58,30 @@ int main()
                 Gamestate = difficult;
             if (click && CheckCollisionPointRec(GetMousePosition(), but[3]))
                 Gamestate = mode;
+        }
+        break;
+        // continue
+        case ctn:
+        {
+            DrawRectangleRounded(defaultWindowSize, 0, 6, {0, 0, 0, 60});
+            DrawText("Continue", 500 / 2 - MeasureText("Continue", 40) / 2, 20, 40, WHITE);
+            Rectangle but[] = {{135, 200, 230, 60},
+                               {135, 300, 230, 60}};
+            const char *txt[] = {"New Game", "Continue"};
+            DrawButton(but[0], txt[0], 15);
+            bool click = IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
+            if (click && CheckCollisionPointRec(GetMousePosition(), but[0]))
+            {
+                game.Reset();
+                game2.Reset();
+                Gamestate = gameplay;
+            }
+
+            DrawButton(but[1], txt[1], 15);
+            if (click && CheckCollisionPointRec(GetMousePosition(), but[1]))
+            {
+                Gamestate = gameplay;
+            }
         }
         break;
         // gameplay
@@ -82,21 +107,22 @@ int main()
             }
             else
                 DrawPause();
+            // Key Down
 
-            if (IsKeyDown(KEY_S))
-                tick -= 0.01;
-            else if (tick < 1)
-                tick = tickDefault;
+            // if (IsKeyDown(KEY_S))
+            //     tick -= 0.01;
+            // else if (tick < 1)
+            //     tick = tickDefault;
 
-            if (IsKeyDown(KEY_DOWN))
-                tick2 -= 0.01;
-            else if (tick2 < 1)
-                tick2 = tickDefault2;
+            // if (IsKeyDown(KEY_DOWN))
+            //     tick2 -= 0.01;
+            // else if (tick2 < 1)
+            //     tick2 = tickDefault2;
 
             game.Draw(displayGame1);
 
             /*=== Game play 2 ===*/
-            
+
             if (gameplay2)
             {
                 // draw score gameplay 2
@@ -154,7 +180,6 @@ int main()
     CloseWindow();
 }
 
-
 void EventTriggered(double interval, double &lastUpdateTime, Game &game)
 {
     double currentTime = GetTime();
@@ -170,12 +195,12 @@ void DrawMenu(const Rectangle but[], const char *txt[], int count)
     DrawText("TETRIS", 250 - MeasureText("TETRIS", 80) / 2, 44, 80, BLACK);
     DrawText("TETRIS", 250 - MeasureText("TETRIS", 77) / 2, 40, 77, WHITE);
     for (int i = 0; i < count; i++)
-        DrawButton(but[i], txt[i]);
+        DrawButton(but[i], txt[i], 20);
 }
-void DrawButton(Rectangle Button, const char *txt)
+void DrawButton(Rectangle Button, const char *txt, int h)
 {
     DrawRectangleRounded(Button, 0.5, 30, violet);
-    DrawText(txt, Button.x + (Button.width - MeasureText(txt, 30)) / 2, Button.y + 25, 30, lightviolet);
+    DrawText(txt, Button.x + (Button.width - MeasureText(txt, 30)) / 2, Button.y + h, 30, lightviolet);
 }
 void DrawButton2(Rectangle Button, const char *txt, bool b)
 {
@@ -195,6 +220,7 @@ void ResizeWindow(gameState Gamestate, bool gameplay2, Texture2D bgtext)
     // draw picture
     DrawTexture(bgtext, displayGame1, 0, WHITE);
     DrawTexture(bgtext, displayGame2, 0, WHITE); // 505 is width of window
+
     if (Gamestate == menu)
         SetWindowSize(defaultWindowSize.width, defaultWindowSize.height);
     else if (Gamestate == gameplay && gameplay2 == true)
@@ -260,7 +286,6 @@ void DrawInstruction()
         {"Press arrow up or W key to rotate the blocks "},
         {"Press arrow left or A key to move the blocks "},
         {"Press arrow right or D key to move the blocks "},
-        // {"Press arrow down or S key to move the blocks "},
         {"Hold arrow down or S key to accelerate the game "},
         {"When game over press on any arrow key to continue"},
         {"Press space bar to stop the game only 1 Player"},
@@ -278,7 +303,8 @@ void BackButton(gameState &Gamestate)
     DrawRectangleRounded(back, 0.3, 6, lightblue);
     DrawText("BACK", back.x + 45, back.y + 17, 30, WHITE);
     bool click = IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
-    if (click && CheckCollisionPointRec(GetMousePosition(), back)){
+    if (click && CheckCollisionPointRec(GetMousePosition(), back))
+    {
         Gamestate = menu;
     }
 }
@@ -328,7 +354,7 @@ void DrawGameMode()
             gameplay2 = false;
         else if (CheckCollisionPointRec(GetMousePosition(), mode[1]))
             gameplay2 = true;
-        
+
         if (CheckCollisionPointRec(GetMousePosition(), but[0]) && (tickDefault * 10 < 9))
             tickDefault += 0.1;
         if (CheckCollisionPointRec(GetMousePosition(), but[1]) && (tickDefault * 10 > 2))
@@ -342,7 +368,8 @@ void DrawGameMode()
 void LoadGameMode()
 {
     ifstream f("save/save.mode", ios_base::binary);
-    if (!f) {
+    if (!f)
+    {
         cerr << "loi mo tep!" << endl;
         return;
     }
@@ -355,13 +382,14 @@ void LoadGameMode()
 void SaveGameMode()
 {
     ofstream f("save/save.mode", ios_base::binary);
-    if (!f) {
+    if (!f)
+    {
         cerr << "loi mo tep!" << endl;
         return;
     }
     cerr << "Saved mode and speed." << endl;
-    f.write(reinterpret_cast<char *>(&gameplay2), sizeof(gameplay2)); // save mode
-    f.write(reinterpret_cast<char *>(&tickDefault), sizeof(tickDefault)); // same sleep game 1
+    f.write(reinterpret_cast<char *>(&gameplay2), sizeof(gameplay2));       // save mode
+    f.write(reinterpret_cast<char *>(&tickDefault), sizeof(tickDefault));   // same sleep game 1
     f.write(reinterpret_cast<char *>(&tickDefault2), sizeof(tickDefault2)); // save game 2
     f.close();
 }
@@ -369,14 +397,16 @@ void SaveGameMode()
 void SaveGrid(Game &game, Game &game2)
 {
     ofstream f("save/save.gird", ios_base::binary);
-    if (!f) {
+    if (!f)
+    {
         cerr << "loi mo tep!" << endl;
         return;
     }
     cerr << "Saved grid." << endl;
     f.write(reinterpret_cast<char *>(&game.grid), sizeof(game.grid));
     f.write(reinterpret_cast<char *>(&game2.grid), sizeof(game2.grid));
-    game.grid.print(); cout <<"\n";
+    game.grid.print();
+    cout << "\n";
     game2.grid.print();
     f.close();
 }
@@ -384,14 +414,16 @@ void SaveGrid(Game &game, Game &game2)
 void LoadGrid(Game &game, Game &game2)
 {
     ifstream f("save/save.gird", ios_base::binary);
-    if (!f) {
+    if (!f)
+    {
         cerr << "loi mo tep!" << endl;
         return;
     }
     cerr << "Load Grid ok." << endl;
     f.read(reinterpret_cast<char *>(&game.grid), sizeof(game.grid));
     f.read(reinterpret_cast<char *>(&game2.grid), sizeof(game2.grid));
-    game.grid.print(); cout <<"\n";
+    game.grid.print();
+    cout << "\n";
     game2.grid.print();
     f.close();
 }

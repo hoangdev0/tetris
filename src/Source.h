@@ -4,13 +4,18 @@
 #include "game.h"
 using namespace std;
 
+#define STATE_LIST \
+    X(menu)        \
+    X(instruct)    \
+    X(gameplay)    \
+    X(difficult)   \
+    X(mode)        \
+    X(ctn)
 enum gameState
 {
-    menu,      // 0
-    instruct,  // 1
-    gameplay,  // 2
-    difficult, // 3
-    mode       // 4
+#define X(state) state,
+    STATE_LIST
+#undef X
 };
 
 enum dif
@@ -32,7 +37,7 @@ Rectangle buttonBase = {150, 0, 200, 70};
 
 void EventTriggered(double, double &, Game &);
 void DrawMenu(const Rectangle[], const char *[], int);
-void DrawButton(Rectangle, const char *);
+void DrawButton(Rectangle, const char *,int);
 void DrawButton2(Rectangle, const char *, bool);
 void DrawButton3(Rectangle, const char *);
 void ResizeWindow(gameState, bool, Texture2D);

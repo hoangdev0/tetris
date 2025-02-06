@@ -1,7 +1,8 @@
 #include "game.h"
-vector<Block> Game::blockPool = {};
-Game::Game()
+// vector<Block> Game::blockPool = {};
+Game::Game(int seed) : seed(seed)
 {
+	blockPool = {};
 	grid = Grid();
 	id = 0;
 	blocks = GetAllBlock();
@@ -16,7 +17,7 @@ Block Game::GetRandBlock()
 	if (blockPool.empty() || id >= (int)blockPool.size())
 	{
 		InitBlockPool();
-		// id = 0; // Reset index
+		id = 0; // Reset index
 	}
 	// Lấy block tại vị trí id và tăng index
 	Block block = blockPool[id];
@@ -75,6 +76,22 @@ void Game::MoveDown()
 		}
 	}
 }
+void Game::HandMoveDown()
+{
+	if (!gameover)
+	{
+		while (1)
+		{
+			curblock.Move(1, 0);
+			if (isBlockOut() || BlockFit() == false)
+			{
+				curblock.Move(-1, 0);
+				LockBlock();
+				break;
+			}
+		}
+	}
+}
 void Game::RotateBlock()
 {
 	if (!gameover)
@@ -86,11 +103,12 @@ void Game::RotateBlock()
 }
 void Game::InitBlockPool()
 {
-	srand(time(0));
-	int seed = rand() % 1000;
+	srand(seed);
+	blockPool.clear();
 	vector<Block> temp = GetAllBlock();
 	shuffle(temp.begin(), temp.end(), default_random_engine(seed));
 	blockPool.insert(blockPool.end(), temp.begin(), temp.end());
+	seed = rand() % 1000;
 }
 bool Game::checkArrowKey(int key)
 {
@@ -107,7 +125,7 @@ void Game::Inp(int key)
 		MoveLeft();
 		break;
 	case KEY_DOWN:
-		MoveDown();
+		HandMoveDown();
 		break;
 	case KEY_UP:
 		RotateBlock();
@@ -125,7 +143,7 @@ void Game::Inp2(int key)
 		MoveLeft();
 		break;
 	case KEY_S:
-		MoveDown();
+		HandMoveDown();
 		break;
 	case KEY_W:
 		RotateBlock();
@@ -135,7 +153,6 @@ void Game::Inp2(int key)
 
 void Game::Reset()
 {
-	blockPool.clear();
 	InitBlockPool();
 	id = 0;
 	grid.khoitao();
