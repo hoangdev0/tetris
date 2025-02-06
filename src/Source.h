@@ -11,6 +11,7 @@ using namespace std;
     X(difficult)   \
     X(mode)        \
     X(ctn)
+
 enum gameState
 {
 #define X(state) state,
@@ -20,9 +21,9 @@ enum gameState
 
 enum dif
 {
-    easy = 6,
+    easy = 2,
     medium = 4,
-    hard = 2
+    hard = 7
 };
 
 Rectangle defaultWindowSize = {0, 0, 500, 620},
@@ -49,3 +50,4 @@ void DrawInstruction();
 void HandInput(Game &, Game &);
 void BackButton(gameState &);
 void DrawGameMode();
+void CreateBlock(dif, Game &, Game &);

@@ -28,6 +28,7 @@ int main()
             Gamestate = menu;
             game.Reset();
             game2.Reset();
+            CreateBlock(Dif, game, game2);
         }
 
         switch (Gamestate)
@@ -74,6 +75,7 @@ int main()
             {
                 game.Reset();
                 game2.Reset();
+                CreateBlock(Dif, game, game2);
                 Gamestate = gameplay;
             }
 
@@ -107,17 +109,17 @@ int main()
             }
             else
                 DrawPause();
+
             // Key Down
+            if (IsKeyDown(KEY_S))
+                tick -= 0.01;
+            else if (tick < 1)
+                tick = tickDefault;
 
-            // if (IsKeyDown(KEY_S))
-            //     tick -= 0.01;
-            // else if (tick < 1)
-            //     tick = tickDefault;
-
-            // if (IsKeyDown(KEY_DOWN))
-            //     tick2 -= 0.01;
-            // else if (tick2 < 1)
-            //     tick2 = tickDefault2;
+            if (IsKeyDown(KEY_DOWN))
+                tick2 -= 0.01;
+            else if (tick2 < 1)
+                tick2 = tickDefault2;
 
             game.Draw(displayGame1);
 
@@ -363,6 +365,38 @@ void DrawGameMode()
             tickDefault2 += 0.1;
         if (CheckCollisionPointRec(GetMousePosition(), but[3]) && (tickDefault2 * 10 > 2))
             tickDefault2 -= 0.1;
+    }
+}
+
+void CreateBlock(dif Dif, Game &game, Game &game2)
+{
+    int row = 10;
+    int count = Dif;
+    for (int i = 0; i < count; i++)
+    {
+        int ro = rand() % 4;
+        while (ro--)
+        {
+            game.RotateBlock();
+            game2.RotateBlock();
+        }
+        //           x
+        int x = 1 + rand() % (row);
+        while (x--)
+        {
+            game.MoveRight();
+            game2.MoveRight();
+        }
+
+        x = 1 + rand() % (row);
+        while (x--)
+        {
+            game.MoveLeft();
+            game2.MoveLeft();
+        }
+        // game.curblock.Move(0, x);
+        game.FitMoveDown();
+        game2.FitMoveDown();
     }
 }
 void LoadGameMode()

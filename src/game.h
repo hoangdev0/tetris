@@ -7,31 +7,29 @@ vector<Block> GetAllBlock();
 class Game
 {
 public:
+	Grid grid;
 	Game(int seed);
 	int seed;
-	bool gameover;
+	int id;							// Vị trí hiện tại trong blockPool			// Seed ban đầu
 	int score;
+	bool gameover;
+	Block curblock;
+	Block nexblock;
+	vector<Block> blockPool;		// Danh sách block chung
 	void Draw(int start);
 	void Inp(int key);
 	void Inp2(int key);
-	void HandMoveDown();
+	void FitMoveDown();
 	void Reset();
 	string GetHightScore();
 	void UpdateHightScore();
-	Block curblock;
-	Block nexblock;
 	Block GetRandBlock();
 	vector<Block> blocks;
 	bool BlockFit();
-	int id;							// Vị trí hiện tại trong blockPool			// Seed ban đầu
 	// static vector<Block> blockPool; // Danh sách block chung
 	// static void InitBlockPool();	// Khởi tạo blockPool với seed hiện tại
-	vector<Block> blockPool;		// Danh sách block chung
 	void InitBlockPool();
 	void MoveDown();
-	Grid grid;
-
-private:
 	bool checkArrowKey(int key);
 	void updateScore(int lineclear, int movedown);
 	void MoveLeft();
@@ -39,4 +37,7 @@ private:
 	bool isBlockOut();
 	void RotateBlock();
 	void LockBlock();
+
+private:
+	//...
 };

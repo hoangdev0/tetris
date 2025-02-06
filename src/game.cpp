@@ -76,7 +76,7 @@ void Game::MoveDown()
 		}
 	}
 }
-void Game::HandMoveDown()
+void Game::FitMoveDown()
 {
 	if (!gameover)
 	{
@@ -125,7 +125,7 @@ void Game::Inp(int key)
 		MoveLeft();
 		break;
 	case KEY_DOWN:
-		HandMoveDown();
+		MoveDown();
 		break;
 	case KEY_UP:
 		RotateBlock();
@@ -143,7 +143,7 @@ void Game::Inp2(int key)
 		MoveLeft();
 		break;
 	case KEY_S:
-		HandMoveDown();
+		MoveDown();
 		break;
 	case KEY_W:
 		RotateBlock();
