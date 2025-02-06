@@ -14,7 +14,7 @@ public:
 	map<int, vector<position>> cells;
 	void Rotate();
 	void UnRotate();
-
+	// void saveBlock(const char *);
 private:
 	int cellSize, rotation;
 	vector<Color> color;

@@ -225,3 +225,71 @@ bool Game::BlockFit()
 			return false;
 	return true;
 }
+// save Game
+void Game::saveGame(const char *path)
+{
+	// ofstream f(path, ios_base::out | ios_base::binary);
+	ofstream f(path, ios_base::out);
+	// Grid grid;
+	for (int i = 0; i < 20; i++)
+		for (int j = 0; j < 10; j++)
+			f.write(reinterpret_cast<const char *>(&grid.grid[i][j]), sizeof(grid.grid[i][j]));
+	// Game(int seed);
+	// int seed;
+	f.write(reinterpret_cast<const char *>(&seed), sizeof(seed));
+	// int id;
+	f.write(reinterpret_cast<const char *>(&id), sizeof(id));
+	// int score;
+	f.write(reinterpret_cast<const char *>(&score), sizeof(score));
+	// bool gameover;
+	// Block curblock;
+	vector<position> title = curblock.getCells();
+	for (auto i : title)
+		f.write(reinterpret_cast<const char *>(&i), sizeof(i));
+	// Block nexblock;
+	vector<position> title1 = nexblock.getCells();
+	for (auto i : title)
+		f.write(reinterpret_cast<const char *>(&i), sizeof(i));
+	// vector<Block> blockPool;
+	for(auto i : blockPool)
+	{
+		vector<position> title2 = i.getCells();
+		for (auto j : title2)
+			f.write(reinterpret_cast<const char *>(&j), sizeof(j));
+	}
+	f.close();
+}
+// load Game
+void Game::loadGame(const char *path)
+{
+	// ifstream f(path, ios_base::in | ios_base::binary);
+	ifstream f(path, ios_base::in);
+	// Grid grid;
+	for (int i = 0; i < 20; i++)
+		for (int j = 0; j < 10; j++)
+			f.read(reinterpret_cast<char *>(&grid.grid[i][j]), sizeof(grid.grid[i][j]));
+	// Game(int seed);
+	// int seed;
+	f.read(reinterpret_cast<char *>(&seed), sizeof(seed));
+	// int id;		
+	f.read(reinterpret_cast<char *>(&id), sizeof(id));
+	// int score;
+	f.read(reinterpret_cast<char *>(&score), sizeof(score));
+	// bool gameover;
+	// Block curblock;
+	vector<position> title = curblock.getCells();
+	for (auto i : title)
+		f.read(reinterpret_cast<char *>(&i), sizeof(i));
+	// Block nexblock;
+	vector<position> title1 = nexblock.getCells();
+	for (auto i : title)
+		f.read(reinterpret_cast<char *>(&i), sizeof(i));
+	// vector<Block> blockPool;
+	for(auto i : blockPool)
+	{
+		vector<position> title2 = i.getCells();
+		for (auto j : title2)
+			f.read(reinterpret_cast<char *>(&j), sizeof(j));
+	}
+	f.close();
+}

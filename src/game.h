@@ -37,6 +37,8 @@ public:
 	bool isBlockOut();
 	void RotateBlock();
 	void LockBlock();
+	void saveGame(const char *);
+	void loadGame(const char *);
 
 private:
 	//...

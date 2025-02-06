@@ -10,7 +10,8 @@ using namespace std;
     X(gameplay)    \
     X(difficult)   \
     X(mode)        \
-    X(ctn)
+    X(ctn)         \
+    X(save)
 
 enum gameState
 {
@@ -51,3 +52,8 @@ void HandInput(Game &, Game &);
 void BackButton(gameState &);
 void DrawGameMode();
 void CreateBlock(dif, Game &, Game &);
+bool CheckErrFile(const char *,string);
+void SaveGameMode();
+void LoadGameMode();
+void SaveGame(Game &, Game &);
+void LoadGame(Game &, Game &);

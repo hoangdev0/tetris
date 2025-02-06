@@ -25,10 +25,15 @@ int main()
         // Return Menu & ResetGame
         if (IsKeyPressed(KEY_ENTER))
         {
-            Gamestate = menu;
-            game.Reset();
-            game2.Reset();
-            CreateBlock(Dif, game, game2);
+            // SaveGame(game, game2);
+            if (Gamestate == gameplay)
+                Gamestate = save;
+            else
+            {
+                game.Reset();
+                game2.Reset();
+                CreateBlock(Dif, game, game2);
+            }
         }
 
         switch (Gamestate)
@@ -61,6 +66,37 @@ int main()
                 Gamestate = mode;
         }
         break;
+        // save
+        case save:
+        {
+            DrawRectangleRounded(defaultWindowSize, 0, 6, {0, 0, 0, 60});
+            DrawText("SAVE", 500 / 2 - MeasureText("SAVE", 40) / 2, 20, 40, WHITE);
+            Rectangle but[] = {{135, 200, 230, 60},
+                               {135, 300, 230, 60},
+                               {135, 400, 230, 60}};
+            const char *txt[] = {"SAVE", "DON'T SAVE"};
+            DrawButton(but[0], txt[0], 15);
+            bool click = IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
+            if (click && CheckCollisionPointRec(GetMousePosition(), but[1]))
+            {
+                game.Reset();
+                game2.Reset();
+                CreateBlock(Dif, game, game2);
+                Gamestate = menu;
+            }
+
+            DrawButton(but[1], txt[1], 15);
+            if (click && CheckCollisionPointRec(GetMousePosition(), but[0]))
+            {
+                Gamestate = menu;
+                SaveGameMode();
+                SaveGame(game, game2);
+            }
+            DrawButton(but[2], "Continue", 15);
+            if (click && CheckCollisionPointRec(GetMousePosition(), but[2]))
+                Gamestate = gameplay;
+        }
+        break;
         // continue
         case ctn:
         {
@@ -82,6 +118,8 @@ int main()
             DrawButton(but[1], txt[1], 15);
             if (click && CheckCollisionPointRec(GetMousePosition(), but[1]))
             {
+                LoadGameMode();
+                LoadGame(game, game2);
                 Gamestate = gameplay;
             }
         }
@@ -179,6 +217,7 @@ int main()
         }
         EndDrawing();
     }
+    // SaveGame(game, game2);
     CloseWindow();
 }
 
@@ -308,6 +347,7 @@ void BackButton(gameState &Gamestate)
     if (click && CheckCollisionPointRec(GetMousePosition(), back))
     {
         Gamestate = menu;
+        SaveGameMode();
     }
 }
 void DrawGameMode()
@@ -399,65 +439,79 @@ void CreateBlock(dif Dif, Game &game, Game &game2)
         game2.FitMoveDown();
     }
 }
+bool CheckErrFile(const char *p, string s)
+{
+    if (s == "in")
+    {
+        ifstream f(p, ios_base::in | ios_base::binary);
+        if (!f)
+        {
+            cerr << "loi mo tep!" << endl;
+            return false;
+        }
+        cerr << "Load " << p << " successfully" << endl;
+        return true;
+    }
+    else if (s == "out")
+    {
+        ofstream f(p, ios_base::out | ios_base::binary);
+        if (!f)
+        {
+            cerr << "loi mo tep!" << endl;
+            return false;
+        }
+        cerr << "Saved " << p << " successfully" << endl;
+        return true;
+    }
+    return false;
+}
 void LoadGameMode()
 {
-    ifstream f("save/save.mode", ios_base::binary);
-    if (!f)
+    if (CheckErrFile("save/save.mode", "in"))
     {
-        cerr << "loi mo tep!" << endl;
-        return;
+        ifstream f("save/save.mode", ios_base::in | ios_base::binary);
+        f.read(reinterpret_cast<char *>(&gameplay2), sizeof(gameplay2));
+        f.read(reinterpret_cast<char *>(&tickDefault), sizeof(tickDefault));
+        f.read(reinterpret_cast<char *>(&tickDefault2), sizeof(tickDefault2));
+        f.close();
     }
-    cerr << "Load Mode and Speed ok." << endl;
-    f.read(reinterpret_cast<char *>(&gameplay2), sizeof(gameplay2));
-    f.read(reinterpret_cast<char *>(&tickDefault), sizeof(tickDefault));
-    f.read(reinterpret_cast<char *>(&tickDefault2), sizeof(tickDefault2));
-    f.close();
 }
 void SaveGameMode()
 {
-    ofstream f("save/save.mode", ios_base::binary);
-    if (!f)
+    if (CheckErrFile("save/save.mode", "out"))
     {
-        cerr << "loi mo tep!" << endl;
-        return;
+        ofstream f("save/save.mode",ios_base::out | ios_base::binary);
+        f.write(reinterpret_cast<char *>(&gameplay2), sizeof(gameplay2));       // save mode
+        f.write(reinterpret_cast<char *>(&tickDefault), sizeof(tickDefault));   // same sleep game 1
+        f.write(reinterpret_cast<char *>(&tickDefault2), sizeof(tickDefault2)); // save game 2
+        f.close();
     }
-    cerr << "Saved mode and speed." << endl;
-    f.write(reinterpret_cast<char *>(&gameplay2), sizeof(gameplay2));       // save mode
-    f.write(reinterpret_cast<char *>(&tickDefault), sizeof(tickDefault));   // same sleep game 1
-    f.write(reinterpret_cast<char *>(&tickDefault2), sizeof(tickDefault2)); // save game 2
-    f.close();
 }
 
-void SaveGrid(Game &game, Game &game2)
+void SaveGame(Game &game, Game &game2)
 {
-    ofstream f("save/save.gird", ios_base::binary);
-    if (!f)
+    if (CheckErrFile("save/game1.save", "out"))
     {
-        cerr << "loi mo tep!" << endl;
-        return;
+        ofstream f("save/game1.save", ios_base::out | ios_base::binary);
+        game.saveGame("save/game1.save");
     }
-    cerr << "Saved grid." << endl;
-    f.write(reinterpret_cast<char *>(&game.grid), sizeof(game.grid));
-    f.write(reinterpret_cast<char *>(&game2.grid), sizeof(game2.grid));
-    game.grid.print();
-    cout << "\n";
-    game2.grid.print();
-    f.close();
+    if (CheckErrFile("save/game2.save", "out"))
+    {
+        ofstream f("save/game2.save", ios_base::out | ios_base::binary);
+        game2.saveGame("save/game2.save");
+    }
 }
 
-void LoadGrid(Game &game, Game &game2)
+void LoadGame(Game &game, Game &game2)
 {
-    ifstream f("save/save.gird", ios_base::binary);
-    if (!f)
+    if (CheckErrFile("save/game1.save", "in"))
     {
-        cerr << "loi mo tep!" << endl;
-        return;
+        ofstream f("save/game1.save", ios_base::in | ios_base::binary);
+        game.loadGame("save/game1.save");
     }
-    cerr << "Load Grid ok." << endl;
-    f.read(reinterpret_cast<char *>(&game.grid), sizeof(game.grid));
-    f.read(reinterpret_cast<char *>(&game2.grid), sizeof(game2.grid));
-    game.grid.print();
-    cout << "\n";
-    game2.grid.print();
-    f.close();
+    if (CheckErrFile("save/game2.save", "in"))
+    {
+        ofstream f("save/game2.save", ios_base::in | ios_base::binary);
+        game2.loadGame("save/game2.save");
+    }
 }
