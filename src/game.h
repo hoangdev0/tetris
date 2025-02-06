@@ -22,8 +22,8 @@ public:
 	Block GetRandBlock();
 	vector<Block> blocks;
 	bool BlockFit();
-	static vector<Block> blockPool; // Danh sách block chung
 	int id;							// Vị trí hiện tại trong blockPool			// Seed ban đầu
+	static vector<Block> blockPool; // Danh sách block chung
 	static void InitBlockPool();	// Khởi tạo blockPool với seed hiện tại
 
 	Grid grid;
