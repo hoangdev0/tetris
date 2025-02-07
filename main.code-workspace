@@ -50,7 +50,10 @@
 			"stdexcept": "cpp",
 			"streambuf": "cpp",
 			"cinttypes": "cpp",
-			"typeinfo": "cpp"
+			"typeinfo": "cpp",
+			"forward_list": "cpp",
+			"list": "cpp",
+			"valarray": "cpp"
 		},
 		"git.autoRepositoryDetection": false,
 		"git.enabled": false

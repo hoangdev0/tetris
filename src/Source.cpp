@@ -14,7 +14,7 @@ int main()
          game2 = Game(seed);
 
     dif Dif = medium;
-
+    LoadGameMode();
     while (WindowShouldClose() == false) // escape
     {
         BeginDrawing();
@@ -53,11 +53,7 @@ int main()
             DrawMenu(but, txt, 4);
             bool click = IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
             if (click && CheckCollisionPointRec(GetMousePosition(), but[0]))
-            {
                 Gamestate = ctn;
-                // game.Reset();
-                // game2.Reset();
-            }
             if (click && CheckCollisionPointRec(GetMousePosition(), but[1]))
                 Gamestate = instruct;
             if (click && CheckCollisionPointRec(GetMousePosition(), but[2]))
@@ -480,7 +476,7 @@ void SaveGameMode()
 {
     if (CheckErrFile("save/save.mode", "out"))
     {
-        ofstream f("save/save.mode",ios_base::out | ios_base::binary);
+        ofstream f("save/save.mode", ios_base::out | ios_base::binary);
         f.write(reinterpret_cast<char *>(&gameplay2), sizeof(gameplay2));       // save mode
         f.write(reinterpret_cast<char *>(&tickDefault), sizeof(tickDefault));   // same sleep game 1
         f.write(reinterpret_cast<char *>(&tickDefault2), sizeof(tickDefault2)); // save game 2

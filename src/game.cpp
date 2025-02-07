@@ -243,20 +243,12 @@ void Game::saveGame(const char *path)
 	f.write(reinterpret_cast<const char *>(&score), sizeof(score));
 	// bool gameover;
 	// Block curblock;
-	vector<position> title = curblock.getCells();
-	for (auto i : title)
-		f.write(reinterpret_cast<const char *>(&i), sizeof(i));
+	curblock.save(f);
 	// Block nexblock;
-	vector<position> title1 = nexblock.getCells();
-	for (auto i : title)
-		f.write(reinterpret_cast<const char *>(&i), sizeof(i));
+	nexblock.save(f);
 	// vector<Block> blockPool;
-	for(auto i : blockPool)
-	{
-		vector<position> title2 = i.getCells();
-		for (auto j : title2)
-			f.write(reinterpret_cast<const char *>(&j), sizeof(j));
-	}
+	for (auto i : blockPool)
+		i.save(f);
 	f.close();
 }
 // load Game
@@ -271,25 +263,17 @@ void Game::loadGame(const char *path)
 	// Game(int seed);
 	// int seed;
 	f.read(reinterpret_cast<char *>(&seed), sizeof(seed));
-	// int id;		
+	// int id;
 	f.read(reinterpret_cast<char *>(&id), sizeof(id));
 	// int score;
 	f.read(reinterpret_cast<char *>(&score), sizeof(score));
 	// bool gameover;
 	// Block curblock;
-	vector<position> title = curblock.getCells();
-	for (auto i : title)
-		f.read(reinterpret_cast<char *>(&i), sizeof(i));
+	curblock.load(f);
 	// Block nexblock;
-	vector<position> title1 = nexblock.getCells();
-	for (auto i : title)
-		f.read(reinterpret_cast<char *>(&i), sizeof(i));
+	nexblock.load(f);
 	// vector<Block> blockPool;
-	for(auto i : blockPool)
-	{
-		vector<position> title2 = i.getCells();
-		for (auto j : title2)
-			f.read(reinterpret_cast<char *>(&j), sizeof(j));
-	}
+	for (auto &i : blockPool)
+		i.load(f);
 	f.close();
 }
