@@ -38,7 +38,7 @@ void Game::Draw(int start)
 		nexblock.Draw(start + 255, 255);
 		break;
 	case 4:
-		nexblock.Draw(start + 255, 245);
+		nexblock.Draw(start + 255, 235);
 		break;
 
 	default:
@@ -166,20 +166,22 @@ void Game::Reset()
 string Game::GetHightScore()
 {
 	string highscore;
-	ifstream f("src/tetris.hightscore");
+	ifstream f(getPath(hs));
 	getline(f, highscore);
 	f.close();
+	if (highscore.empty())
+		return "0";
 	return highscore;
 }
 
 void Game::UpdateHightScore()
 {
 	int highscore = stoi(GetHightScore());
-	if (score > highscore)
+	if (score >= highscore)
 	{
 		highscore = score;
 		ofstream f;
-		f.open("src/tetris.hightscore");
+		f.open(getPath(hs));
 		f << highscore;
 		f.close();
 	}

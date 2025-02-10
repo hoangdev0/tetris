@@ -1,12 +1,11 @@
 #include "Source.h"
-
 int main()
 {
     InitWindow(defaultWindowSize.width, defaultWindowSize.height, "Tetris");
     SetTargetFPS(60);
 
-    Texture2D bgtext = LoadTexture("src/bg4.png");
-    Font font = LoadFontEx("font/monogram.ttf", 64, 0, 0);
+    Texture2D bgtext = LoadTexture(getPath(bg));
+    Font font = LoadFontEx(getPath(ft), 64, 0, 0);
 
     gameState Gamestate = menu;
     int seed = time(0);
@@ -42,7 +41,6 @@ int main()
         case menu:
         {
             //                            x      y               width             height
-            DrawRectangleRounded(defaultWindowSize, 0.1, 6, {0, 0, 0, 50});
             Rectangle but[] = {
                 {buttonBase.x, 200, buttonBase.width, buttonBase.height}, // Strat
                 {buttonBase.x, 300, buttonBase.width, buttonBase.height}, // Instruct
@@ -65,7 +63,6 @@ int main()
         // save
         case save:
         {
-            DrawRectangleRounded(defaultWindowSize, 0, 6, {0, 0, 0, 60});
             DrawText("SAVE", 500 / 2 - MeasureText("SAVE", 40) / 2, 20, 40, WHITE);
             Rectangle but[] = {{135, 200, 230, 60},
                                {135, 300, 230, 60},
@@ -96,7 +93,6 @@ int main()
         // continue
         case ctn:
         {
-            DrawRectangleRounded(defaultWindowSize, 0, 6, {0, 0, 0, 60});
             DrawText("Continue", 500 / 2 - MeasureText("Continue", 40) / 2, 20, 40, WHITE);
             Rectangle but[] = {{135, 200, 230, 60},
                                {135, 300, 230, 60}};
@@ -123,7 +119,6 @@ int main()
         // gameplay
         case gameplay:
         {
-
             if (gameplay2 == false && IsKeyPressed(KEY_SPACE))
                 Pause = !Pause;
 
@@ -217,6 +212,7 @@ int main()
     CloseWindow();
 }
 
+// Function
 void EventTriggered(double interval, double &lastUpdateTime, Game &game)
 {
     double currentTime = GetTime();
@@ -257,11 +253,11 @@ void ResizeWindow(gameState Gamestate, bool gameplay2, Texture2D bgtext)
     // draw picture
     DrawTexture(bgtext, displayGame1, 0, WHITE);
     DrawTexture(bgtext, displayGame2, 0, WHITE); // 505 is width of window
-
-    if (Gamestate == menu)
-        SetWindowSize(defaultWindowSize.width, defaultWindowSize.height);
-    else if (Gamestate == gameplay && gameplay2 == true)
+    DrawRectangleRounded(multiWindowSize, 0.1, 6, {0, 0, 0, 70});
+    if (Gamestate == gameplay && gameplay2 == true)
         SetWindowSize(multiWindowSize.width, multiWindowSize.height);
+    else
+        SetWindowSize(defaultWindowSize.width, defaultWindowSize.height);
 }
 void DrawScore(Game &game, float start, Font font)
 {
@@ -463,9 +459,9 @@ bool CheckErrFile(const char *p, string s)
 }
 void LoadGameMode()
 {
-    if (CheckErrFile("save/save.mode", "in"))
+    if (CheckErrFile(getPath(sgm), "in"))
     {
-        ifstream f("save/save.mode", ios_base::in | ios_base::binary);
+        ifstream f(getPath(sgm), ios_base::in | ios_base::binary);
         f.read(reinterpret_cast<char *>(&gameplay2), sizeof(gameplay2));
         f.read(reinterpret_cast<char *>(&tickDefault), sizeof(tickDefault));
         f.read(reinterpret_cast<char *>(&tickDefault2), sizeof(tickDefault2));
@@ -474,9 +470,9 @@ void LoadGameMode()
 }
 void SaveGameMode()
 {
-    if (CheckErrFile("save/save.mode", "out"))
+    if (CheckErrFile(getPath(sgm), "out"))
     {
-        ofstream f("save/save.mode", ios_base::out | ios_base::binary);
+        ofstream f(getPath(sgm), ios_base::out | ios_base::binary);
         f.write(reinterpret_cast<char *>(&gameplay2), sizeof(gameplay2));       // save mode
         f.write(reinterpret_cast<char *>(&tickDefault), sizeof(tickDefault));   // same sleep game 1
         f.write(reinterpret_cast<char *>(&tickDefault2), sizeof(tickDefault2)); // save game 2
@@ -486,28 +482,28 @@ void SaveGameMode()
 
 void SaveGame(Game &game, Game &game2)
 {
-    if (CheckErrFile("save/game1.save", "out"))
+    if (CheckErrFile(getPath(g1), "out"))
     {
-        ofstream f("save/game1.save", ios_base::out | ios_base::binary);
-        game.saveGame("save/game1.save");
+        ofstream f(getPath(g1), ios_base::out | ios_base::binary);
+        game.saveGame(getPath(g1));
     }
-    if (CheckErrFile("save/game2.save", "out"))
+    if (CheckErrFile(getPath(g2), "out"))
     {
-        ofstream f("save/game2.save", ios_base::out | ios_base::binary);
-        game2.saveGame("save/game2.save");
+        ofstream f(getPath(g2), ios_base::out | ios_base::binary);
+        game2.saveGame(getPath(g2));
     }
 }
 
 void LoadGame(Game &game, Game &game2)
 {
-    if (CheckErrFile("save/game1.save", "in"))
+    if (CheckErrFile(getPath(g1), "in"))
     {
-        ofstream f("save/game1.save", ios_base::in | ios_base::binary);
-        game.loadGame("save/game1.save");
+        ofstream f(getPath(g1), ios_base::in | ios_base::binary);
+        game.loadGame(getPath(g1));
     }
-    if (CheckErrFile("save/game2.save", "in"))
+    if (CheckErrFile(getPath(g2), "in"))
     {
-        ofstream f("save/game2.save", ios_base::in | ios_base::binary);
-        game2.loadGame("save/game2.save");
+        ofstream f(getPath(g2), ios_base::in | ios_base::binary);
+        game2.loadGame(getPath(g2));
     }
 }

@@ -2,6 +2,7 @@
 #include <bits/stdc++.h>
 #include "grid.h"
 #include "tetrominos.cpp"
+#include "path.h"
 using namespace std;
 vector<Block> GetAllBlock();
 class Game
